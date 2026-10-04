@@ -1,0 +1,50 @@
+name: Build WebAssembly module
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  COMPONENTIZE_GO_VERSION: v0.4.3
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Install componentize-go ${{ env.COMPONENTIZE_GO_VERSION }}
+        run: |
+          go install github.com/bytecodealliance/componentize-go@${COMPONENTIZE_GO_VERSION}
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      - name: Test
+        run: go test ./export_dispatch_guest_handler/
+
+      - name: Build
+        run: |
+          componentize-go build --output ./echo.wasm
+    
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          make_latest: true
+          generate_release_notes: true
+          tag_name: ${{ needs.version.outputs.version }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: ${{ github.ref_name }}
+          files: echo.wasm
+          fail_on_unmatched_files: true
+          generate_release_notes: true  
+          make_latest: true

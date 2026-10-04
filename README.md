@@ -10,7 +10,17 @@ echo is a WebAssembly guest component that acts as a sample handler for [dispatc
 > [!NOTE]
 > Only edit `export_dispatch_guest_handler/echo.go`. Everything else in this repository is generated or defines the contract, and should not be modified by hand.
 
-## Build
+## Download
+
+Download the latest build of the component:
+
+```sh
+curl -LO https://github.com/peter-mghendi/echo/releases/download/latest/echo.wasm
+```
+
+Or browse all versions on the [releases page](https://github.com/peter-mghendi/echo/releases).
+
+## Build from source
 
 ```bash
 componentize-go build --output ./echo.wasm
@@ -61,3 +71,11 @@ go mod tidy
 - Update `export_dispatch_guest_handler/echo.go` so that it compiles against the updated bindings.
 - Follow the instructions above to [Build](#build).
 
+## Releasing
+
+Pushing a tag builds the component and publishes a release named after that tag, with `echo.wasm` attached:
+
+```sh
+git tag v1.0.0
+git push origin v1.0.0
+```

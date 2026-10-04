@@ -25,9 +25,20 @@ wasm-tools component wit echo.wasm
 
 You should see the generated world exporting `dispatch:guest/handler@1.0.0` with a handle method.
 
+## Tests
+
+`export_dispatch_guest_handler/echo_test.go` contains unit tests for the default echo behavior. Run them with:
+
+```bash
+go test ./export_dispatch_guest_handler/
+```
+
+If you change what Handle does, update or replace these tests to match. 
+The tests run natively with the standard Go toolchain, so they don't require building the component.
+
 ## Making edits
 
-Edit the `export_dispatch_guest_handler/echo.go` file to update the hhandler logic. 
+Edit the `export_dispatch_guest_handler/echo.go` file to update the hhandler logic, and update any tests. 
 It may be renamed or deleted, but a handler MUST be implemented in `package export_dispatch_guest_handler` that exports a function with the signature:
 
 ```go

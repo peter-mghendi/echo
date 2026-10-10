@@ -1,25 +1,22 @@
-package dispatch:guest@1.0.0;
-
-interface types {
-    record request {
-        method: string,
-        path: string,
-        headers: list<tuple<string, string>>,
-        body: list<u8>,
-    }
-
-    record response {
-        status: s32,
-        headers: list<tuple<string, string>>,
-        body: list<u8>,
-    }
-}
+package dispatch:guest@2.0.0;
 
 interface handler {
-    use types.{request, response};
-    handle: func(req: request) -> response;
+  record request {
+    method: string,
+    path: string,
+    headers: list<tuple<string, string>>,
+    body: list<u8>,
+  }
+
+  record response {
+    status: s32,
+    headers: list<tuple<string, string>>,
+    body: list<u8>,
+  }
+  
+  handle: func(req: request) -> response;
 }
 
 world dispatch {
-    export handler;
+  export handler;
 }

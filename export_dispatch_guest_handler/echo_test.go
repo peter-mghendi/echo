@@ -4,7 +4,7 @@ import (
 	"slices"
 	"testing"
 
-	"wit_component/dispatch_guest_types"
+	"wit_component/dispatch_guest_handler"
 
 	witTypes "go.bytecodealliance.org/pkg/wit/types"
 )
@@ -14,7 +14,7 @@ func header(k, v string) witTypes.Tuple2[string, string] {
 }
 
 func TestHandleReturnsStatusOK(t *testing.T) {
-	resp := Handle(dispatch_guest_types.Request{})
+	resp := Handle(dispatch_guest_handler.Request{})
 	if resp.Status != 200 {
 		t.Errorf("Status = %d, want 200", resp.Status)
 	}
@@ -40,7 +40,7 @@ func TestHandleEchoesHeaders(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			resp := Handle(dispatch_guest_types.Request{Headers: tt.headers})
+			resp := Handle(dispatch_guest_handler.Request{Headers: tt.headers})
 			if !slices.Equal(resp.Headers, tt.headers) {
 				t.Errorf("Headers = %v, want %v", resp.Headers, tt.headers)
 			}
@@ -60,7 +60,7 @@ func TestHandleEchoesBody(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			resp := Handle(dispatch_guest_types.Request{Body: tt.body})
+			resp := Handle(dispatch_guest_handler.Request{Body: tt.body})
 			if !slices.Equal(resp.Body, tt.body) {
 				t.Errorf("Body = %v, want %v", resp.Body, tt.body)
 			}
@@ -70,7 +70,7 @@ func TestHandleEchoesBody(t *testing.T) {
 
 func TestHandleBodyDoesNotAliasRequest(t *testing.T) {
 	reqBody := []byte("original")
-	resp := Handle(dispatch_guest_types.Request{Body: reqBody})
+	resp := Handle(dispatch_guest_handler.Request{Body: reqBody})
 
 	reqBody[0] = 'X'
 	if string(resp.Body) != "original" {
@@ -87,9 +87,9 @@ func TestHandleIgnoresMethodAndPath(t *testing.T) {
 	headers := []witTypes.Tuple2[string, string]{header("k", "v")}
 	body := []byte("payload")
 
-	want := Handle(dispatch_guest_types.Request{Headers: headers, Body: body})
+	want := Handle(dispatch_guest_handler.Request{Headers: headers, Body: body})
 	for _, method := range []string{"GET", "POST", "DELETE", ""} {
-		got := Handle(dispatch_guest_types.Request{
+		got := Handle(dispatch_guest_handler.Request{
 			Method:  method,
 			Path:    "/some/path",
 			Headers: headers,
